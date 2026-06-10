@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxOffice - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Global Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow" style="background-color: #0f2d59;">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase tracking-wider" href="/">🎬 BoxOffice</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    {% if session.get('user_id') %}
+                        <li class="nav-item">
+                            <span class="nav-link text-white me-3">
+                                Welcome, <strong class="text-warning">{{ session['username'] }}</strong> 
+                                <span class="badge bg-light text-dark ms-1">{{ session['role'] }}</span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-light btn-sm fw-bold px-3" href="/logout">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link text-white me-2" href="/login">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning btn-sm fw-bold px-3 text-dark" href="/register">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dynamic Content Container -->
+    <div class="container mt-5">
+        
+        <!-- Flash System Notifications -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold" style="color: #0f2d59;">Now Showing</h1>
+                <p class="text-muted">Browse active movie schedules and book your tickets instantly.</p>
+            </div>
+        </div>
+
+        <!-- Dynamic Grid Engine -->
+        <div class="row">
+            {% if schedules %}
+                {% for schedule in schedules %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <span class="badge bg-secondary mb-2 align-self-start">{{ schedule['genre'] }}</span>
+                                <h3 class="card-title fw-bold text-dark mb-1">{{ schedule['title'] }}</h3>
+                                <p class="text-muted small mb-3">🕒 Runtime: {{ schedule['duration_minutes'] }} mins</p>
+                                
+                                <hr class="text-muted my-2">
+                                
+                                <p class="mb-1"><strong>📍 Venue:</strong> {{ schedule['theater_name'] }}</p>
+                                <p class="mb-1"><strong>📅 Show Time:</strong> {{ schedule['show_time'] }}</p>
+                                <p class="mb-3 text-success fw-bold fs-5">₹{{ schedule['ticket_price'] }}</p>
+                                
+                                <div class="mt-auto">
+                                    <a href="/book/{{ schedule['schedule_id'] }}" class="btn w-100 text-white fw-bold" style="background-color: #0f2d59;">
+                                        Book Tickets
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="card text-center p-5 border-0 shadow-sm bg-white">
+                        <div class="card-body">
+                            <h3 class="text-muted">No active showtimes found</h3>
+                            <p class="text-muted mb-0">Check back later or contact administrators to publish new movie schedules.</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

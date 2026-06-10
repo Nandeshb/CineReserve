@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoxOffice - Admin Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">🎬 BOXOFFICE ADMIN</a>
+            <a href="/" class="btn btn-outline-light btn-sm">View Site</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0 p-4">
+                    <h3 class="fw-bold mb-3 text-dark">Add New Movie</h3>
+                    <form action="/admin/add-movie" method="POST">
+                        <div class="mb-3"><label class="form-label">Movie Title</label><input type="text" name="title" class="form-control" required></div>
+                        <div class="row">
+                            <div class="col mb-3"><label class="form-label">Genre</label><input type="text" name="genre" class="form-control"></div>
+                            <div class="col mb-3"><label class="form-label">Duration (Mins)</label><input type="number" name="duration_minutes" class="form-control" required></div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3"><label class="form-label">Rating</label><input type="text" name="rating" class="form-control" placeholder="UA, R, PG"></div>
+                            <div class="col mb-3"><label class="form-label">Release Date</label><input type="date" name="release_date" class="form-control"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Save Movie</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm border-0 p-4">
+                    <h3 class="fw-bold mb-3 text-dark">Create Movie Schedule</h3>
+                    <form action="/admin/add-schedule" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Select Movie</label>
+                            <select name="movie_id" class="form-select" required>
+                                {% for movie in movies %}<option value="{{ movie.movie_id }}">{{ movie.title }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Theater</label>
+                            <select name="theater_id" class="form-select" required>
+                                {% for theater in theaters %}<option value="{{ movie.movie_id if not theaters else theater.theater_id }}">{{ theater.name }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3"><label class="form-label">Show Date & Time</label><input type="datetime-local" name="show_time" class="form-control" required></div>
+                            <div class="col mb-3"><label class="form-label">Ticket Price (₹)</label><input type="number" step="0.01" name="ticket_price" class="form-control" required></div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold">Publish Showtime</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
